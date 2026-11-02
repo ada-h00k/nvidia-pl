@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: AGPL-3.0-only
+[Unit]
+Description=Set NVIDIA persistence mode and power limit
+After=nvidia-persistenced.service
+Wants=nvidia-persistenced.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Environment=POWER_LIMIT=160
+EnvironmentFile=-/etc/default/nvidia-pl
+# The leading "-" ignores failures (e.g. if nvidia-persistenced already manages persistence mode)
+ExecStart=-@NVIDIA_SMI@ -pm ENABLED
+ExecStart=@NVIDIA_SMI@ -pl ${POWER_LIMIT}
+
+[Install]
+WantedBy=multi-user.target
